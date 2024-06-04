@@ -19,8 +19,14 @@ jobs:
       with:
         node-version: '16'
 
-    - name: Install dependencies
-      run: npm install
+    - name: Clean npm cache
+      run: npm cache clean --force
+
+    - name: Install npm@latest
+      run: npm install -g npm@latest
+
+    - name: Install dependencies with verbose logging
+      run: npm install --verbose
 
     - name: Build project
       run: npm run build
