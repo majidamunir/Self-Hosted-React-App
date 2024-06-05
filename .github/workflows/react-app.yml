@@ -13,7 +13,7 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 16  # Adjust Node.js version as needed
+          node-version: "16"
 
       - name: Install dependencies
         run: npm install
@@ -21,9 +21,9 @@ jobs:
       - name: Build the app
         run: npm run build
 
-      - name: Run tests (if applicable)
-        run: npm test  # Replace with your test command
+      - name: Run tests 
+        run: npm test  
 
-      - name: Deploy (optional)
+      - name: Deploy
         # Add deployment steps specific to your target platform
 
