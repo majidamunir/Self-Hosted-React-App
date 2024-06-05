@@ -1,72 +1,29 @@
-name: CI/CD
+name: CI/CD Pipeline
 
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
 
 jobs:
-  build:
+  build-and-test:
     runs-on: self-hosted
-
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '18'
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16  # Adjust Node.js version as needed
 
-    - name: Clean npm cache
-      run: npm cache clean --force
+      - name: Install dependencies
+        run: npm install
 
-    - name: Network diagnostics
-      run: |
-        echo "Checking DNS resolution for npm registry..."
-        nslookup registry.npmjs.org
-        echo "Checking connectivity to npm registry..."
-        curl -I https://registry.npmjs.org/
-        echo "Checking DNS resolution for yarn registry..."
-        nslookup registry.yarnpkg.com
-        echo "Checking connectivity to yarn registry..."
-        curl -I https://registry.yarnpkg.com/
+      - name: Build the app
+        run: npm run build
 
-    - name: Install npm@latest
-      run: npm install -g npm@latest
+      - name: Run tests (if applicable)
+        run: npm test  # Replace with your test command
 
-    - name: Install dependencies with retry
-      run: |
-        retry() {
-          local n=1
-          local max=5
-          local delay=5
-          while true; do
-            "$@" && break || {
-              if [[ $n -lt $max ]]; then
-                ((n++))
-                echo "Command failed. Attempt $n/$max:"
-                sleep $delay;
-              else
-                echo "The command has failed after $n attempts."
-                return 1
-              fi
-            }
-          done
-        }
-        retry npm install --verbose --timing --network-timeout=60000
+      - name: Deploy (optional)
+        # Add deployment steps specific to your target platform
 
-    - name: Build project
-      run: npm run build
-
-    - name: Deploy
-      run: |
-        # Add deployment commands here
-        # Example: copy files to a server, upload to a cloud provider, etc.
-
-    - name: Runner diagnostics
-      run: |
-        free -h
-        df -h
-        top -bn1
