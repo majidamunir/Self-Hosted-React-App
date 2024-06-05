@@ -1,33 +1,46 @@
-name: CI/CD Pipeline of React App
+name: CI/CD
+
 on:
   push:
-    branches: [main]
-  workflow_dispatch:
-
-permissions:
- contents: write
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   build:
     runs-on: self-hosted
-    
+
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'
 
-      - name: Install dependencies
-        run: npm install
+    - name: Clean npm cache
+      run: npm cache clean --force
 
-      - name: Build Project
-        run: npm run build
+    - name: Install npm@latest
+      run: npm install -g npm@latest
 
-      # - name: Deploy to GitHub Pages
-      #   uses: JamesIves/github-pages-deploy-action@4.1.0
-      #   with:
-      #     branch: gh-pages
-      #     folder: build
+    - name: Configure npm to use different registry
+      run: npm config set registry https://registry.npmjs.org/
+
+    - name: Install dependencies with verbose logging and timeout
+      run: npm install --verbose --timing --network-timeout=60000
+
+    - name: Build project
+      run: npm run build
+
+    - name: Deploy
+      run: |
+        # Add deployment commands here
+        # Example: copy files to a server, upload to a cloud provider, etc.
+
+    - name: Runner diagnostics
+      run: |
+        free -h
+        df -h
+        top -bn1
