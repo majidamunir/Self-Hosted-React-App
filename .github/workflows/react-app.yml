@@ -22,11 +22,17 @@ jobs:
     - name: Clean npm cache
       run: npm cache clean --force
 
+    - name: Network diagnostics
+      run: |
+        echo "Checking DNS resolution..."
+        nslookup registry.npmjs.org
+        echo "Checking connectivity to npm registry..."
+        curl -I https://registry.npmjs.org/
+        echo "Checking connectivity to yarn registry..."
+        curl -I https://registry.yarnpkg.com/
+        
     - name: Install npm@latest
       run: npm install -g npm@latest
-
-    - name: Configure npm to use different registry
-      run: npm config set registry https://registry.npmjs.org/
 
     - name: Install dependencies with verbose logging and timeout
       run: npm install --verbose --timing --network-timeout=60000
