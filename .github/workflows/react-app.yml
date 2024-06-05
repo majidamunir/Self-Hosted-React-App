@@ -24,18 +24,38 @@ jobs:
 
     - name: Network diagnostics
       run: |
-        echo "Checking DNS resolution..."
+        echo "Checking DNS resolution for npm registry..."
         nslookup registry.npmjs.org
         echo "Checking connectivity to npm registry..."
         curl -I https://registry.npmjs.org/
+        echo "Checking DNS resolution for yarn registry..."
+        nslookup registry.yarnpkg.com
         echo "Checking connectivity to yarn registry..."
         curl -I https://registry.yarnpkg.com/
-        
+
     - name: Install npm@latest
       run: npm install -g npm@latest
 
-    - name: Install dependencies with verbose logging and timeout
-      run: npm install --verbose --timing --network-timeout=60000
+    - name: Install dependencies with retry
+      run: |
+        retry() {
+          local n=1
+          local max=5
+          local delay=5
+          while true; do
+            "$@" && break || {
+              if [[ $n -lt $max ]]; then
+                ((n++))
+                echo "Command failed. Attempt $n/$max:"
+                sleep $delay;
+              else
+                echo "The command has failed after $n attempts."
+                return 1
+              fi
+            }
+          done
+        }
+        retry npm install --verbose --timing --network-timeout=60000
 
     - name: Build project
       run: npm run build
