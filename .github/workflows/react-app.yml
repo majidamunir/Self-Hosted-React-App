@@ -18,6 +18,11 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: '14'
+        cache: 'npm'
+        cache-dependency-path: 'package-lock.json'
+
+    - name: Install npm@latest
+      run: npm install -g npm@latest
 
     - name: Install dependencies
       run: npm install
@@ -40,6 +45,11 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: '14'
+        cache: 'npm'
+        cache-dependency-path: 'package-lock.json'
+
+    - name: Install npm@latest
+      run: npm install -g npm@latest
 
     - name: Install dependencies
       run: npm install
