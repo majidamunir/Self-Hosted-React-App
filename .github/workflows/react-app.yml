@@ -25,5 +25,10 @@ jobs:
         run: npm test  
 
       - name: Deploy
-        # Add deployment steps specific to your target platform
-
+        run: |
+          # Add your deployment steps here
+          # For example, deploy to S3
+        #   aws s3 sync build/ s3://your-bucket-name --delete
+        # env:
+        #   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        #   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
